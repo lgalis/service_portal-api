@@ -28,6 +28,16 @@ module Api
         render :json => order
       end
 
+      def return_order
+        @order = Order.find(params.require(:order_id))
+        authorize(@order)
+
+        service_offering_check
+
+        order = Catalog::CreateRequestForAppliedInventories.new(@order).return.order
+        render :json => order
+      end
+
       def destroy
         order = Order.find(params.require(:id))
         svc = Catalog::SoftDelete.new(order)
